@@ -1,10 +1,8 @@
 # 08-06-2024 TESTING FOR 4.2.9 Electrum-Bitnet-QTUM
 
-# 07-01-2024 improvements to the QR code
 
 
 
-![s1](https://github.com/c4pt000/a-PROTECTED_QR_CODE-QR-code-Encryption-layer-for-QR-codes-in-plainsight-and-machine-vision-and-crypt/releases/download/gif/new-QR-electrum-bitnet-4.2.8.gif)
 
 
 # how to restore kivy framework revert to -> python3.8
