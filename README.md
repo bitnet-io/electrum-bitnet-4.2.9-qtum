@@ -4,7 +4,7 @@
 # SEED PHRASE FROM ANYTHING BEFORE 4.2.9 IS *NOT*  COMPATIBLE ONLY PREVIOUS PRIVATE (WIF) KEYS WILL WORK
 
 
-
+# https://scortik.com/how-to-create-a-qrc20-token-using-qtum/
 
 
 # how to restore kivy framework revert to -> python3.8
