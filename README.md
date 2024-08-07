@@ -5,7 +5,8 @@
 
 
 # https://scortik.com/how-to-create-a-qrc20-token-using-qtum/
-
+# https://github.com/bitnet-io/QRC20Token
+# https://remix.ethereum.org/#lang=en&optimize=false&runs=200&evmVersion=null&version=soljson-v0.4.26+commit.4563c3fc.js
 
 # how to restore kivy framework revert to -> python3.8
 # with python3.8 installed
