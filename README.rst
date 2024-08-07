@@ -1,121 +1,143 @@
-Qtum Electrum - Lightweight Qtum client
-=======================================
+# 08-06-2024 TESTING FOR 4.2.9 Electrum-Bitnet-QTUM
 
-Qtum Electrum is a lightweight Qtum wallet forked from `Electrum <https://github.com/spesmilo/electrum>`_.
-
-::
-
-  Licence: MIT Licence
-  Language: Python (>= 3.6)
+# 07-01-2024 improvements to the QR code
 
 
-.. image:: /screenshot/history.png
-.. image:: /screenshot/tokens.png
+
+![s1](https://github.com/c4pt000/a-PROTECTED_QR_CODE-QR-code-Encryption-layer-for-QR-codes-in-plainsight-and-machine-vision-and-crypt/releases/download/gif/new-QR-electrum-bitnet-4.2.8.gif)
 
 
-Getting started
-===============
+# how to restore kivy framework revert to -> python3.8
+# with python3.8 installed
+```
+ wget https://bootstrap.pypa.io/get-pip.py
+ python3.8 get-pip.py 
+ python3.8 -m pip install kivy==2.0.0rc2
+ python3.8 -m pip install .
+ python3.8 -m pip install cryptography
+ python3.8 -m pip install aiorpcx==0.18.7 cryptography requests PyQt5 protobuf==3.20.0
+ python3.8 run_electrum -g kivy
+```
+for python3.10
+```
+ python3.10  -m pip install Cython==0.29.15
+ python3.10  -m pip install kivy==2.1.0
+```
 
-Electrum is a pure python application. If you want to use the Qt interface, install the Qt dependencies::
+# requires older python3 aiorpcx == 0.18.7 and libsecp256k1.so.0 or wont work
+```
+git clone https://github.com/bitnet-io/electrum-bitnet-4.2.8
+cd electrum-bitnet-4.2.8
+python3 -m pip install .
+python3 -m pip install aiorpcx==0.18.7 cryptography requests PyQt5 protobuf==3.20.0
 
-    // linux
-    sudo apt-get install python3-pyqt5
+./contrib/make_libsecp256k1.sh
+python3 run_electrum
+```
 
-    // macOS (thanks @puruoni)
-    brew install pyqt5
-    export PATH="/opt/homebrew/opt/qt@5/bin:$PATH"
-    export PATH="/opt/homebrew/opt/pyqt@5/bin:$PATH"
-    cp -pr /opt/homebrew/Cellar/pyqt@5/5.15.9/lib/python3.10/site-packages/*  /opt/homebrew/lib/python3.10/site-packages/.
+# build for windows setup.exe, portable.exe (wine builder) requires docker
+```
+git clone https://github.com/bitnet-io/electrum-bitnet-4.2.8
+cd electrum-bitnet-4.2.8
 
-    // *** In the case of pyenv ***
-    cp -pr /opt/homebrew/Cellar/pyqt@5/5.15.9/lib/python3.10/site-packages/* /Users/[username]/.pyenv/versions/3.10.8/lib/python3.10/site-packages/.
+cd contrib/build-wine
+docker build -t electrum-wine-builder-img .
+cd ../../
+./contrib/build-wine/build-binary.sh
+cd /opt/wine64/drive_c/electrum
+./make_win.sh
+```
 
+# Linux AppImage (requires docker)
+```
 
-For elliptic curve operations, `libsecp256k1`_ is a required dependency::
+git clone https://github.com/bitnet-io/electrum-bitnet-4.2.8
+cd electrum-bitnet-4.2.8
 
-    // linux
-    sudo apt-get install libsecp256k1-0
+cd contrib/build-linux-appimage
+docker build -t electrum-appimage-builder-img .
+cd ../../../
+./contrib/build-linux/appimage/build-binary.sh
 
-    // macOS
-    brew tap cuber/homebrew-libsecp256k1
-    brew install libsecp256k1
+./make_appimage.sh 
+```
 
-Alternatively, when running from a cloned repository, a script is provided to build
-libsecp256k1 yourself::
+# building for android (requires docker + java11 + nodejs + apksigner to sign the debug.apk)
 
-    sudo apt-get install automake libtool
-    ./contrib/make_libsecp256k1.sh
+```
+git clone https://github.com/bitnet-io/electrum-bitnet-4.2.8
+cd electrum-bitnet-4.2.8
 
-Due to the need for fast symmetric ciphers, either one of `pycryptodomex`_
-or `cryptography`_ is required. Install from your package manager
-(or from pip)::
+sh android-builder-docker.sh
 
-    sudo apt-get install python3-cryptography
+enter the docker guest
 
+┌─[root@nwstrtrj01 04-18-2024-17:24:30] ]─[/home/c4pt000/opt/ELECTRUM-URANIUMX-04-13-2024/electrum-bitnet-4.1.5]
+└──╼ # sh android-builder-docker.sh 
+eb6180cefd0a6f14756557e7f8cd2dfd7b3f80eb905e266a5f614dec178feffb
 
-If you would like hardware wallet support, see `this`_.
+docker exec -it eb6 bash
 
-.. _libsecp256k1: https://github.com/bitcoin-core/secp256k1
-.. _pycryptodomex: https://github.com/Legrandin/pycryptodome
-.. _cryptography: https://github.com/pyca/cryptography
-.. _this: https://github.com/spesmilo/electrum-docs/blob/master/hardware-linux.rst
+hit crtl-C a few times to stop .bashrc scripts from running
 
-Development version (git clone)
--------------------------------
+run make_apk then hit "Y" for Yes
 
-Check out the code from GitHub::
+./contrib/android/make_apk
 
-    git clone https://github.com/qtumproject/qtum-electrum.git
-    cd qtum-electrum
-    git submodule update --init
+should build the apk into dist/
 
-Run install (this should install dependencies)::
+exit
 
-    python3 -m pip install -r ./contrib/requirements/requirements-eth.txt
-    python3 -m pip install --user -e .
+cp -rf dist/Bitnet-4.2.8.0-arm64-v8a-debug.apk .
 
-    // fix protobuf on M1 macOS
-    export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+in order to "sign" the apk with a cert you need apksigner from android build-tools installed with your host
 
-Create translations (optional)::
+/Android/Sdk/build-tools/34.0.0/apksigner
 
-    sudo apt-get install python-requests gettext
-    ./contrib/make_locale
+adjust this script to your path to apksigner create-keystore-and-sign.sh
 
+then run the script to sign the debug .apk
 
-Finally, to start Electrum::
+sh create-keystore-and-sign.sh
 
-    ./run_electrum
+script will output a signed apk
 
+Bitnet-4.2.8.0-arm64-v8a-signed.apk
 
-Creating Binaries
-=================
-
-Linux (tarball)
----------------
-
-See :code:`contrib/build-linux/sdist/README.md`.
-
-
-Linux (AppImage)
-----------------
-
-See :code:`contrib/build-linux/appimage/README.md`.
-
-
-Mac OS X / macOS
-----------------
-
-See :code:`contrib/osx/README.md`.
-
-
-Windows
--------
-
-See :code:`contrib/build-wine/README.md`.
+```
 
 
-Android
--------
 
-See :code:`electrum/gui/kivy/Readme.md`.
+
+
+
+# macOS python3.10 , xcode command line tools)
+
+```
+git clone https://github.com/bitnet-io/electrum-bitnet-4.2.8
+cd electrum-bitnet-4.2.8
+
+cd electrum-bitnet
+python3 -m pip install --upgrade pip
+python3 -m pip install .
+python3 -m pip install PyQt5
+cd contrib
+sh build-macos-automake.sh
+sh make_libsecp256k1.sh
+cd ..
+./run_electrum
+```
+macos dmg builder (requires intel macOS (arm64 hybrid fails...suggest BigSur)
+
+
+# running this in terminal directly with ncurses graphics instead of QT or Kivy
+
+```./run_electrum -g text```
+```./Electrum-AppImage_x86_64 -g text```
+
+![s1](https://github.com/bitnet-io/electrum-bitnet-4.2.8/releases/download/4.2.8/run_electrum-g-text.gif)
+
+
+
+
+this project has nothing to do with Barry styles and he went to jail for computer crimes and computer scams for a long long long time 
